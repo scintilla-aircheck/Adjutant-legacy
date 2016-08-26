@@ -4,12 +4,31 @@
  Author:	konra
 */
 
-// the setup function runs once when you press reset or power the board
-void setup() {
+#include <Wire/Wire.h>
 
+#include "LMP91000.h"
+
+// Gas sensor circuit controls
+#define PSEL0_PIN 5
+#define PSEL1_PIN 4
+#define PSEL2_PIN 0
+#define MENB_PIN 13
+
+// Sensors and components
+Components::LMP91000 co_sensor = Components::LMP91000(MENB_PIN);
+
+void setup() {
+	// Intialize UART connection
+	Serial.begin(9600);
+	while (!Serial);
+
+	// Initialize I2C connection
+	Wire.begin();
+
+	// Initialze sensors and components
+	co_sensor.Begin();
 }
 
-// the loop function runs over and over again until power down or reset
 void loop() {
-  
+	// Do stuff...
 }

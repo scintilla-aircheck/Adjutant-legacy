@@ -3,11 +3,13 @@
 Components::LMP91000::LMP91000(byte menb_pin)
 {
 	MENB_Pin_ = menb_pin;
-	pinMode(MENB_Pin_, OUTPUT);
 }
 
-Components::LMP91000::~LMP91000()
+Components::LMP91000::~LMP91000() {}
+
+void Components::LMP91000::Begin()
 {
+	pinMode(MENB_Pin_, OUTPUT);
 }
 
 bool Components::LMP91000::isReady()

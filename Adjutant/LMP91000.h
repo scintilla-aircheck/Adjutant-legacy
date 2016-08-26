@@ -78,6 +78,9 @@ namespace Components
 
 		static const byte I2CAddress = 0x48; // 1001 000
 
+		// Set pin states, etc.
+		void Begin();
+
 		// Device ready status
 		bool isReady();
 
