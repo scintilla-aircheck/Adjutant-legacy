@@ -12,7 +12,7 @@ namespace Components
 		~LMP91000();
 
 		// LMP91000 register address map
-		static enum class ERegister {
+		enum class ERegister {
 			Status = 0x00,		// Read-only	/	Not lockable
 			Lock = 0x01,		// Read/Write	/	     "
 			TIACN = 0x10,		//     "		/	  Lockable
@@ -21,7 +21,7 @@ namespace Components
 		};
 
 		// TIA gain resistor settings
-		static enum class ETIAGain {
+		enum class ETIAGain {
 			External,
 			R2_75k,
 			R3_5k,
@@ -33,7 +33,7 @@ namespace Components
 		};
 
 		// Load resistor settings
-		static enum class ERLoad {
+		enum class ERLoad {
 			R10,
 			R33,
 			R50,
@@ -41,7 +41,7 @@ namespace Components
 		};
 
 		// Internal zero settings
-		static enum class EIntZero {
+		enum class EIntZero {
 			d20pct,
 			d50pct,
 			d67pct,
@@ -49,7 +49,7 @@ namespace Components
 		};
 
 		// Voltage bias settings
-		static enum class EBias {
+		enum class EBias {
 			d0pct,
 			d1pct,
 			d2pct,
@@ -67,7 +67,7 @@ namespace Components
 		};
 
 		// Operating mode settings
-		static enum class EOpMode {
+		enum class EOpMode {
 			DeepSleep = 0x00,
 			TwoCell = 0x01,
 			Standby = 0x02,
