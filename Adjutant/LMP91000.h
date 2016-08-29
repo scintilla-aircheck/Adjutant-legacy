@@ -84,7 +84,7 @@ namespace Components
 		// Device ready status
 		bool isReady();
 
-		// TIACN / REFCN lock status
+		// TIACN / REFCN lock status (true is locked)
 		bool isLocked();
 		void isLocked(bool locked);
 
@@ -96,7 +96,7 @@ namespace Components
 		ERLoad RLoad();
 		void RLoad(ERLoad resistance);
 
-		// External reference voltage setting
+		// External reference voltage setting (true is external)
 		bool ExtRef();
 		void ExtRef(bool external);
 
@@ -104,7 +104,7 @@ namespace Components
 		EIntZero IntZero();
 		void IntZero(EIntZero int_z);
 
-		// Bias voltage polarity setting
+		// Bias voltage polarity setting (true is positive)
 		bool BiasSign();
 		void BiasSign(bool positive);
 
@@ -112,7 +112,7 @@ namespace Components
 		EBias Bias();
 		void Bias(EBias step);
 
-		// FET short switch setting
+		// FET short switch setting (true is enables)
 		bool FETShort();
 		void FETShort(bool enabled);
 
