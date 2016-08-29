@@ -9,17 +9,18 @@ Components::LMP91000::~LMP91000() {}
 
 void Components::LMP91000::Begin()
 {
-	pinMode(MENB_Pin_, OUTPUT);
+	//pinMode(MENB_Pin_, OUTPUT);
+	//digitalWrite(MENB_Pin_, LOW);
 }
 
 bool Components::LMP91000::isReady()
 {
-	return (bool)getValue(ERegister::Status);
+	return getValue(ERegister::Status);
 }
 
 bool Components::LMP91000::isLocked()
 {
-	return (bool)getValue(ERegister::Lock);
+	return getValue(ERegister::Lock);
 }
 
 void Components::LMP91000::isLocked(bool locked)
