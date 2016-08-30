@@ -113,10 +113,14 @@ void Components::LMP91000::OpMode(EOpMode mode)
 byte Components::LMP91000::setRegister(ERegister target)
 {
 	digitalWrite(MENBPin_, LOW);
+
 	Wire.beginTransmission(I2CAddress);
 	Wire.write((byte)target);
-	return Wire.endTransmission();
+	byte error = Wire.endTransmission();
+
 	digitalWrite(MENBPin_, HIGH);
+
+	return error;
 }
 
 /// Sets a target LMP91002 memory register to an intended value
@@ -128,8 +132,9 @@ byte Components::LMP91000::getRawValue(ERegister target)
 	// Read target register
 	digitalWrite(MENBPin_, LOW);
 	Wire.requestFrom((int)I2CAddress, 1);
-	return Wire.read();
 	digitalWrite(MENBPin_, HIGH);
+
+	return Wire.read();
 }
 
 /// Sets a target LMP91002 memory register to an intended value
@@ -139,8 +144,10 @@ byte Components::LMP91000::setRawValue(ERegister target, byte value)
 	Wire.beginTransmission(I2CAddress);
 	Wire.write((byte)target);
 	Wire.write(value);
-	return Wire.endTransmission();
+	byte error = Wire.endTransmission();
 	digitalWrite(MENBPin_, HIGH);
+
+	return error;
 }
 
 /// Gets a specific value from a target LMP91002 register
