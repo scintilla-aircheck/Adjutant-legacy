@@ -8,6 +8,7 @@ namespace Components
 	class LMP91000
 	{
 	public:
+		LMP91000();
 		LMP91000(byte menb_pin);
 		~LMP91000();
 
@@ -78,9 +79,6 @@ namespace Components
 
 		static const byte I2CAddress = 0x48; // 1001 000
 
-		// Set pin states, etc.
-		void Begin();
-
 		// Device ready status
 		bool isReady();
 
@@ -122,7 +120,7 @@ namespace Components
 		
 	private:
 		// The MENB pin number
-		byte MENB_Pin_;
+		byte MENBPin_;
 
 		// Set the current target register
 		byte setRegister(ERegister target);

@@ -1,17 +1,18 @@
 #include "LMP91000.h"
 
+Components::LMP91000::LMP91000() {}
+
 Components::LMP91000::LMP91000(byte menb_pin)
 {
-	MENB_Pin_ = menb_pin;
+	// Associate MENB pin
+	MENBPin_ = menb_pin;
+
+	// Set MENB pin state
+	pinMode(MENBPin_, OUTPUT);
+	digitalWrite(MENBPin_, HIGH);
 }
 
 Components::LMP91000::~LMP91000() {}
-
-void Components::LMP91000::Begin()
-{
-	//pinMode(MENB_Pin_, OUTPUT);
-	//digitalWrite(MENB_Pin_, LOW);
-}
 
 bool Components::LMP91000::isReady()
 {
@@ -111,26 +112,35 @@ void Components::LMP91000::OpMode(EOpMode mode)
 /// Sets the LMP91002 memory register to an intended target
 byte Components::LMP91000::setRegister(ERegister target)
 {
+	digitalWrite(MENBPin_, LOW);
 	Wire.beginTransmission(I2CAddress);
 	Wire.write((byte)target);
 	return Wire.endTransmission();
+	digitalWrite(MENBPin_, HIGH);
 }
 
 /// Sets a target LMP91002 memory register to an intended value
 byte Components::LMP91000::getRawValue(ERegister target)
 {
+	// Set target register
 	setRegister(target);
+
+	// Read target register
+	digitalWrite(MENBPin_, LOW);
 	Wire.requestFrom((int)I2CAddress, 1);
 	return Wire.read();
+	digitalWrite(MENBPin_, HIGH);
 }
 
 /// Sets a target LMP91002 memory register to an intended value
 byte Components::LMP91000::setRawValue(ERegister target, byte value)
 {
+	digitalWrite(MENBPin_, LOW);
 	Wire.beginTransmission(I2CAddress);
 	Wire.write((byte)target);
 	Wire.write(value);
 	return Wire.endTransmission();
+	digitalWrite(MENBPin_, HIGH);
 }
 
 /// Gets a specific value from a target LMP91002 register
