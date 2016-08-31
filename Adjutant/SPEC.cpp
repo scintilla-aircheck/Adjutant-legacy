@@ -1,45 +1,48 @@
 #include "SPEC.h"
 
-Components::SPEC::SPEC() : LMP91000() {}
-
-Components::SPEC::SPEC(byte select_0, byte select_1, byte select_2, byte menb) : LMP91000(menb)
+namespace Components
 {
-	// Associate control pins
-	Address_[0] = select_0;
-	Address_[1] = select_1;
-	Address_[2] = select_2;
+	SPEC::SPEC() : LMP91000() {}
 
-	// Set pin states
-	pinMode(Address_[0], OUTPUT);
-	pinMode(Address_[1], OUTPUT);
-	pinMode(Address_[2], OUTPUT);
-}
+	SPEC::SPEC(byte select_0, byte select_1, byte select_2, byte menb) : LMP91000(menb)
+	{
+		// Associate control pins
+		Address_[0] = select_0;
+		Address_[1] = select_1;
+		Address_[2] = select_2;
 
-Components::SPEC::~SPEC() {}
+		// Set pin states
+		pinMode(Address_[0], OUTPUT);
+		pinMode(Address_[1], OUTPUT);
+		pinMode(Address_[2], OUTPUT);
+	}
 
-void Components::SPEC::Configure(byte addr, ETarget target)
-{
-	Select(addr);
+	SPEC::~SPEC() {}
+
+	void SPEC::Configure(byte addr, ETarget target)
+	{
+		Select(addr);
 		if (this->isReady())
 			if (target == ETarget::CO) {}
-}
+	}
 
-double Components::SPEC::ADC()
-{
-	return ADC_.Voltage();
-}
+	double SPEC::ADC()
+	{
+		return ADC_.Voltage();
+	}
 
-void Components::SPEC::ADC(bool continuous, MCP3425::EResolution resolution, MCP3425::EGain gain)
-{
-	ADC_.Configure(continuous, resolution, gain);
-}
+	void SPEC::ADC(bool continuous, MCP3425::EResolution resolution, MCP3425::EGain gain)
+	{
+		ADC_.Configure(continuous, resolution, gain);
+	}
 
-void Components::SPEC::Select(byte target)
-{
-	// Parse byte and set pin state
-	for (byte i = 0; i < 3; i++)
-		if (target & (1 << i))
-			digitalWrite(Address_[i], HIGH);
-		else
-			digitalWrite(Address_[i], LOW);
+	void SPEC::Select(byte target)
+	{
+		// Parse byte and set pin state
+		for (byte i = 0; i < 3; i++)
+			if (target & (1 << i))
+				digitalWrite(Address_[i], HIGH);
+			else
+				digitalWrite(Address_[i], LOW);
+	}
 }
