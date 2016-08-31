@@ -32,7 +32,7 @@ void setup() {
 	// Initialize external ADC
 	ext_adc = Components::MCP3425();
 	ext_adc.Configure(true, Components::MCP3425::EResolution::d16Bit, Components::MCP3425::EGain::x1);
-	Serial.println("ADC initialized.");
+	Serial.println("External ADC initialized.");
 
 	// Initialize gas sensors
 	gas = Components::SPEC(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
