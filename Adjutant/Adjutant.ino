@@ -6,7 +6,6 @@
 
 #include <Wire/Wire.h>
 
-#include "MCP3425.h"
 #include "SPEC.h"
 
 // Gas sensor circuit controls
@@ -16,8 +15,7 @@
 #define MENB_PIN 16
 
 // Sensors and components
-Components::MCP3425 ext_adc;
-Components::SPEC gas;
+Components::SPEC gas = Components::SPEC(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
 
 void setup() {
 	// Intialize Serial/UART connection
@@ -29,26 +27,15 @@ void setup() {
 	Wire.begin();
 	Serial.println("I2C initialized.");
 
-	// Initialize external ADC
-	ext_adc = Components::MCP3425();
-	ext_adc.Configure(true, Components::MCP3425::EResolution::d16Bit, Components::MCP3425::EGain::x1);
-	Serial.println("External ADC initialized.");
-
-	// Initialize gas sensors
-	gas = Components::SPEC(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
+	// Initialize SPEC sensors
+	gas.ADC(true, Components::MCP3425::EResolution::d16Bit, Components::MCP3425::EGain::x1);
 	//gas.Configure(0, Components::SPEC::ETarget::CO);
-	Serial.println("SPEC sensors initialized.");
-
-	// Initialize dust sensor
-	// dust = Components::SDS021();
-
-	// Initialize GPS antenna
-	// gps = Components::SKM61();
+	Serial.println("SPEC sensors configured.");
 
 	// -------------------------------------------------------------------------
 
 	// DEBUG: Initialze CO sensor
-	Serial.print("Waiting for gas sensor...");
+	Serial.print("DEBUG: Waiting for gas sensor...");
 	while (!gas.isReady())
 	{
 		Serial.print(".");
@@ -65,7 +52,7 @@ void setup() {
 	gas.Bias(Components::LMP91000::EBias::d1pct);
 	gas.FETShort(false);
 	gas.OpMode(Components::LMP91000::EOpMode::ThreeCell);
-	Serial.println("CO sensor configured...");
+	Serial.println("DEBUG: CO sensor configured.");
 
 	// DEBUG: Configure CO sensor
 	Serial.println("----- SPEC CO -----");
@@ -108,6 +95,6 @@ void setup() {
 
 void loop() {
 	Serial.print("VOUT: ");
-	Serial.println(ext_adc.Voltage(), 8);
+	Serial.println(gas.ADC(), 8);
 	delay(1000);
 }

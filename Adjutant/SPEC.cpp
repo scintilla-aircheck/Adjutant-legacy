@@ -24,6 +24,16 @@ void Components::SPEC::Configure(byte addr, ETarget target)
 			if (target == ETarget::CO) {}
 }
 
+double Components::SPEC::ADC()
+{
+	return ADC_.Voltage();
+}
+
+void Components::SPEC::ADC(bool continuous, MCP3425::EResolution resolution, MCP3425::EGain gain)
+{
+	ADC_.Configure(continuous, resolution, gain);
+}
+
 void Components::SPEC::Select(byte target)
 {
 	// Parse byte and set pin state

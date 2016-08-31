@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "LMP91000.h"
+#include "MCP3425.h"
 
 namespace Components
 {
@@ -24,8 +25,13 @@ namespace Components
 
 		void Configure(byte addr, ETarget target);
 
+		// ADC interface
+		double ADC();
+		void ADC(bool continuous, MCP3425::EResolution resolution, MCP3425::EGain gain);
+
 	private:
 		byte Address_[3];
+		MCP3425 ADC_;
 
 		void Select(byte target);
 	};
