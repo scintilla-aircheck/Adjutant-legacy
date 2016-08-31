@@ -1,10 +1,10 @@
-#include "SPEC.h"
+#include "PSTAT.h"
 
 namespace Components
 {
-	SPEC::SPEC() : LMP91000() {}
+	PSTAT::PSTAT() : LMP91000() {}
 
-	SPEC::SPEC(byte select_0, byte select_1, byte select_2, byte menb) : LMP91000(menb)
+	PSTAT::PSTAT(byte select_0, byte select_1, byte select_2, byte menb) : LMP91000(menb)
 	{
 		// Associate control pins
 		Address_[0] = select_0;
@@ -12,9 +12,9 @@ namespace Components
 		Address_[2] = select_2;
 	}
 
-	SPEC::~SPEC() {}
+	PSTAT::~PSTAT() {}
 	
-	void SPEC::Begin()
+	void PSTAT::Begin()
 	{
 		// Call parent method
 		LMP91000::Begin();
@@ -25,30 +25,36 @@ namespace Components
 		pinMode(Address_[2], OUTPUT);
 	}
 
-	void SPEC::Configure(byte addr, ETarget target)
+	void PSTAT::Configure(byte addr, LMP91000::Configuration config)
 	{
-		Select(addr);
-		if (this->isReady())
-			if (target == ETarget::CO) {}
 	}
 
-	double SPEC::ADC()
+	double PSTAT::ADC()
 	{
 		return ADC_.Voltage();
 	}
 
-	void SPEC::ADC(bool continuous, MCP3425::EResolution resolution, MCP3425::EGain gain)
+	void PSTAT::ADC(bool continuous, MCP3425::EResolution resolution, MCP3425::EGain gain)
 	{
 		ADC_.Configure(continuous, resolution, gain);
 	}
 
-	void SPEC::Select(byte target)
+	void PSTAT::Select(byte target)
 	{
+		Serial.print("Select: ");
 		// Parse byte and set pin state
 		for (byte i = 0; i < 3; i++)
 			if (target & (1 << i))
+			{
 				digitalWrite(Address_[i], HIGH);
+				Serial.print(Address_[i]);
+				Serial.print("H, ");
+			}
 			else
+			{
 				digitalWrite(Address_[i], LOW);
+				Serial.print("L, ");
+			}
+		Serial.println();
 	}
 }

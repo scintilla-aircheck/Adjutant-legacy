@@ -6,16 +6,16 @@
 
 #include <Wire.h>
 
-#include "SPEC.h"
+#include "PSTAT.h"
 
 // Gas sensor circuit controls
-#define PSEL0_PIN 3
+#define PSEL0_PIN 4
 #define PSEL1_PIN 5
-#define PSEL2_PIN 4
+#define PSEL2_PIN 13
 #define MENB_PIN 16
 
 // Sensors and components
-Components::SPEC gas = Components::SPEC(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
+Components::PSTAT gas = Components::PSTAT(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
 //Components::SDS021 dust = Components::SDS021();
 //Components::SKM61 gps = Components::SKM61();
 
@@ -26,7 +26,7 @@ void setup() {
 	Serial.println("UART initialized.");
 
 	// Initialize I2C connection
-	Wire.pins(2, 14);
+	Wire.pins(2, 0);
 	Wire.begin();
 	Serial.println("I2C initialized.");
 
@@ -98,9 +98,12 @@ void setup() {
 	Serial.println((byte)gas.OpMode());
 }
 
+byte input;
+
 void loop() {
-	Serial.print("VOUT: ");
-	Serial.println(gas.ADC(), 8);
-	//double co = gas.Read(0);
-	delay(1000);
+	if (Serial.available() > 0)
+	{
+		input = Serial.parseInt();
+		gas.Select(input);
+	}
 }
