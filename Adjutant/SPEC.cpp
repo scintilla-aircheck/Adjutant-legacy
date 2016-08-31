@@ -10,14 +10,20 @@ namespace Components
 		Address_[0] = select_0;
 		Address_[1] = select_1;
 		Address_[2] = select_2;
+	}
+
+	SPEC::~SPEC() {}
+	
+	void SPEC::Begin()
+	{
+		// Call parent method
+		LMP91000::Begin();
 
 		// Set pin states
 		pinMode(Address_[0], OUTPUT);
 		pinMode(Address_[1], OUTPUT);
 		pinMode(Address_[2], OUTPUT);
 	}
-
-	SPEC::~SPEC() {}
 
 	void SPEC::Configure(byte addr, ETarget target)
 	{

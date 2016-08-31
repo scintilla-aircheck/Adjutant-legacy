@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Wire/Wire.h>
+#include <Wire.h>
 
 namespace Components
 {
@@ -78,6 +78,8 @@ namespace Components
 		};
 
 		static const byte I2CAddress = 0x48; // 1001 000
+
+		void Begin();
 
 		// Device ready status
 		bool isReady();

@@ -23,6 +23,8 @@ namespace Components
 			H2S
 		};
 
+		void Begin();
+
 		void Configure(byte addr, ETarget target);
 
 		// ADC interface

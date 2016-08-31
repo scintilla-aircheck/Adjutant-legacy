@@ -8,13 +8,16 @@ namespace Components
 	{
 		// Associate MENB pin
 		MENBPin_ = menb_pin;
+	}
 
+	LMP91000::~LMP91000() {}
+
+	void LMP91000::Begin()
+	{
 		// Set MENB pin state
 		pinMode(MENBPin_, OUTPUT);
 		digitalWrite(MENBPin_, HIGH);
 	}
-
-	LMP91000::~LMP91000() {}
 
 	bool LMP91000::isReady()
 	{
@@ -135,7 +138,6 @@ namespace Components
 		digitalWrite(MENBPin_, LOW);
 		Wire.requestFrom((int)I2CAddress, 1);
 		digitalWrite(MENBPin_, HIGH);
-
 		return Wire.read();
 	}
 

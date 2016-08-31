@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Wire/Wire.h>
+#include <Wire.h>
 
 namespace Components
 {

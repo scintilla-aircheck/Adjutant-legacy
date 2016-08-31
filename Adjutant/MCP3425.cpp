@@ -5,13 +5,9 @@ namespace Components
 	const double MCP3425::kLSBs[] = { 1000, 250.0, 62.5 };	// (in microvolts)
 	const int MCP3425::kPGAs[] = { 1, 2, 4, 8 };
 
-	MCP3425::MCP3425()
-	{
-	}
+	MCP3425::MCP3425() {}
 
-	MCP3425::~MCP3425()
-	{
-	}
+	MCP3425::~MCP3425() {}
 
 	byte MCP3425::Configure(bool continuous, EResolution resolution, EGain gain)
 	{

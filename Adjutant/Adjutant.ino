@@ -4,18 +4,20 @@
  Author:	konra
 */
 
-#include <Wire/Wire.h>
+#include <Wire.h>
 
 #include "SPEC.h"
 
 // Gas sensor circuit controls
-#define PSEL0_PIN 5
-#define PSEL1_PIN 4
-#define PSEL2_PIN 0
+#define PSEL0_PIN 3
+#define PSEL1_PIN 5
+#define PSEL2_PIN 4
 #define MENB_PIN 16
 
 // Sensors and components
 Components::SPEC gas = Components::SPEC(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
+//Components::SDS021 dust = Components::SDS021();
+//Components::SKM61 gps = Components::SKM61();
 
 void setup() {
 	// Intialize Serial/UART connection
@@ -24,12 +26,15 @@ void setup() {
 	Serial.println("UART initialized.");
 
 	// Initialize I2C connection
+	Wire.pins(2, 14);
 	Wire.begin();
 	Serial.println("I2C initialized.");
 
 	// Initialize SPEC sensors
+	gas.Begin();
 	gas.ADC(true, Components::MCP3425::EResolution::d16Bit, Components::MCP3425::EGain::x1);
 	//gas.Configure(0, Components::SPEC::ETarget::CO);
+	//gas.Configure(1, Components::SPEC::ETarget::O3);
 	Serial.println("SPEC sensors configured.");
 
 	// -------------------------------------------------------------------------
@@ -96,5 +101,6 @@ void setup() {
 void loop() {
 	Serial.print("VOUT: ");
 	Serial.println(gas.ADC(), 8);
+	//double co = gas.Read(0);
 	delay(1000);
 }
