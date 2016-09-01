@@ -49,12 +49,12 @@ namespace Components
 		void ID(int old_id, int new_id);
 
 		/// Gets/sets a sensor's mode (true is passive/query mode)
-		bool Mode();
-		void Mode(bool passive);
+		bool PassiveMode();
+		void PassiveMode(bool passive);
 
 		/// Gets/sets a sensor's state (i.e. sleep/working)
-		bool State();
-		void State(bool working);
+		bool Awake();
+		void Awake(bool awake);
 
 		/// Gets/sets a sensor's active reporting interval
 		byte Interval();

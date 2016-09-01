@@ -35,24 +35,24 @@ namespace Components
 		WriteMessage(buffer);
 	}
 
-	bool SDS021::Mode()
+	bool SDS021::PassiveMode()
 	{
 		return Mode_;
 	}
 
-	void SDS021::Mode(bool passive)
+	void SDS021::PassiveMode(bool passive)
 	{
 		byte* buffer = MakeMessage(EAction::Mode, ID_);
 		buffer[4] = passive;
 		WriteMessage(buffer);
 	}
 
-	bool SDS021::State()
+	bool SDS021::Awake()
 	{
 		return State_;
 	}
 
-	void SDS021::State(bool working)
+	void SDS021::Awake(bool working)
 	{
 		byte* buffer = MakeMessage(EAction::State, ID_);
 		buffer[4] = working;
