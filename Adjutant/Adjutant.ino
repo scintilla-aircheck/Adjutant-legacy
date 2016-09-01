@@ -5,10 +5,10 @@
 */
 
 #include <Wire.h>
-#include <SoftwareSerial.h>
 
 #include "PSTAT.h"
 #include "SPEC.h"
+#include "SDS021.h"
 
 // UART circuit controls
 #define SSRX_PIN 14
@@ -20,12 +20,9 @@
 #define PSEL2_PIN 13
 #define MENB_PIN 16
 
-// Software serial ports
-SoftwareSerial ss_com = SoftwareSerial(SSRX_PIN, SSTX_PIN);
-
 // Sensors and components
 Components::PSTAT gas = Components::PSTAT(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
-//Components::SDS021 dust = Components::SDS021();
+Components::SDS021 dust = Components::SDS021(SSRX_PIN, SSTX_PIN);
 //Components::SKM61 gps = Components::SKM61();
 
 void setup() {
@@ -35,8 +32,9 @@ void setup() {
 	Serial.println("Hardware serial initialized.");
 
 	// Initialize software serial connection
-	Serial.print("Initializing software serial bus...");
-	ss_com.begin(9600);
+	Serial.print("Initializing dust sensor...");
+	dust.Begin();
+	dust.PassiveMode(true);
 	Serial.println("Done!");
 
 	// Initialize I2C connection
@@ -61,12 +59,18 @@ void setup() {
 	//gas.Configure(1, Components::SPEC::O3);
 }
 
-byte input;
+byte loop_num = 0;
 
 void loop() {
-	if (ss_com.available() > 0)
-	{
-		Serial.print(ss_com.read());
-		Serial.print(" ");
-	}
+	dust.Update();
+
+	Serial.println("----------");
+
+	Serial.print("PM 2.5: ");
+	Serial.println(dust.PM2_5());
+
+	Serial.print("PM 10: ");
+	Serial.println(dust.PM10());
+
+	loop_num++;
 }
