@@ -5,8 +5,14 @@
 */
 
 #include <Wire.h>
+#include <SoftwareSerial.h>
 
 #include "PSTAT.h"
+#include "SPEC.h"
+
+// UART circuit controls
+#define SSRX_PIN 14
+#define SSTX_PIN 12
 
 // Gas sensor circuit controls
 #define PSEL0_PIN 4
@@ -14,96 +20,53 @@
 #define PSEL2_PIN 13
 #define MENB_PIN 16
 
+// Software serial ports
+SoftwareSerial ss_com = SoftwareSerial(SSRX_PIN, SSTX_PIN);
+
 // Sensors and components
 Components::PSTAT gas = Components::PSTAT(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
 //Components::SDS021 dust = Components::SDS021();
 //Components::SKM61 gps = Components::SKM61();
 
 void setup() {
-	// Intialize Serial/UART connection
+	// Intialize UART connection
 	Serial.begin(9600);
 	while (!Serial); // Necessary for USB
-	Serial.println("UART initialized.");
+	Serial.println("Hardware serial initialized.");
+
+	// Initialize software serial connection
+	Serial.print("Initializing software serial bus...");
+	ss_com.begin(9600);
+	Serial.println("Done!");
 
 	// Initialize I2C connection
+	Serial.print("Initializing I2C bus...");
 	Wire.pins(2, 0);
 	Wire.begin();
-	Serial.println("I2C initialized.");
+	Serial.println("Done!");
 
 	// Initialize SPEC sensors
+	Serial.print("Initializing PSTAT circuit...");
 	gas.Begin();
+	Serial.println("Done!");
+
+	Serial.print("Configuring ADC circuit...");
 	gas.ADC(true, Components::MCP3425::EResolution::d16Bit, Components::MCP3425::EGain::x1);
-	//gas.Configure(0, Components::SPEC::ETarget::CO);
-	//gas.Configure(1, Components::SPEC::ETarget::O3);
-	Serial.println("SPEC sensors configured.");
+	Serial.println("Done!");
 
-	// -------------------------------------------------------------------------
+	Serial.print("Configuring O2 sensor...");
+	gas.Configure(0, Components::SPEC::CO);
+	Serial.println("Done!");
 
-	// DEBUG: Initialze CO sensor
-	Serial.print("DEBUG: Waiting for gas sensor...");
-	while (!gas.isReady())
-	{
-		Serial.print(".");
-		delay(10);
-	}
-	Serial.println("DONE!");
-
-	gas.isLocked(false);
-	gas.TIAGain(Components::LMP91000::ETIAGain::R350k);
-	gas.RLoad(Components::LMP91000::ERLoad::R10);
-	gas.ExtRef(true);
-	gas.IntZero(Components::LMP91000::EIntZero::d20pct);
-	gas.BiasSign(true);
-	gas.Bias(Components::LMP91000::EBias::d1pct);
-	gas.FETShort(false);
-	gas.OpMode(Components::LMP91000::EOpMode::ThreeCell);
-	Serial.println("DEBUG: CO sensor configured.");
-
-	// DEBUG: Configure CO sensor
-	Serial.println("----- SPEC CO -----");
-
-	Serial.println("STATUS");
-	Serial.print("  Status: ");
-	Serial.println(gas.isReady());
-
-	Serial.println("LOCK");
-	Serial.print("  Locked: ");
-	Serial.println(gas.isLocked());
-
-	Serial.println("TIACN");
-	Serial.print("  TIA gain: ");
-	Serial.println((byte)gas.TIAGain());
-
-	Serial.print("  RLoad: ");
-	Serial.println((byte)gas.RLoad());
-
-	Serial.println("TIACN");
-	Serial.print("  ExtRef: ");
-	Serial.println(gas.ExtRef());
-
-	Serial.print("  IntZero: ");
-	Serial.println((byte)gas.IntZero());
-
-	Serial.print("  BiasSign: ");
-	Serial.println(gas.BiasSign());
-
-	Serial.print("  Bias: ");
-	Serial.println((byte)gas.Bias());
-
-	Serial.println("MODECN");
-	Serial.print("  FETShort: ");
-	Serial.println(gas.FETShort());
-
-	Serial.print("  OpMode: ");
-	Serial.println((byte)gas.OpMode());
+	//gas.Configure(1, Components::SPEC::O3);
 }
 
 byte input;
 
 void loop() {
-	if (Serial.available() > 0)
+	if (ss_com.available() > 0)
 	{
-		input = Serial.parseInt();
-		gas.Select(input);
+		Serial.print(ss_com.read());
+		Serial.print(" ");
 	}
 }
