@@ -59,18 +59,20 @@ void setup() {
 	//gas.Configure(1, Components::SPEC::O3);
 }
 
-byte loop_num = 0;
-
 void loop() {
-	dust.Update();
-
 	Serial.println("----------");
 
+	dust.Query();
+	dust.Update();
+
 	Serial.print("PM 2.5: ");
-	Serial.println(dust.PM2_5());
+	Serial.println(dust.PM2_5(), 1);
 
 	Serial.print("PM 10: ");
-	Serial.println(dust.PM10());
+	Serial.println(dust.PM10(), 1);
 
-	loop_num++;
+	Serial.print("VOUT: ");
+	Serial.println(gas.ADC(), 4);
+
+	delay(10000);
 }

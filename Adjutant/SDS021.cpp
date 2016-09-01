@@ -95,7 +95,7 @@ namespace Components
 		WriteMessage(buffer);
 	}
 
-	void SDS021::Update()
+	bool SDS021::Update()
 	{
 		byte buffer[kInputLength_];
 		bool invalid = true;
@@ -131,8 +131,12 @@ namespace Components
 					else if (action == EAction::Version)
 						Firmware_ = { buffer[3], buffer[4], buffer[5] };
 				}
+
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	byte* SDS021::MakeMessage(EAction action, int address)

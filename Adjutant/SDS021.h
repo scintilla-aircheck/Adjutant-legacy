@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 
 namespace Components
@@ -74,7 +75,7 @@ namespace Components
 		void Query();
 
 		/// Checks serial buffer for updated data
-		void Update();
+		bool Update();
 
 	private:
 		// Software serial connection
