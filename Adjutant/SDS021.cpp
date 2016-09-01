@@ -156,7 +156,7 @@ namespace Components
 	void SDS021::WriteMessage(byte* buffer)
 	{
 		SoftwareSerial_.write(buffer, kOutputLength_);
-		delete[] buffer;
+		//delete[] buffer;
 	}
 
 	bool SDS021::CheckSum(byte* buffer)
