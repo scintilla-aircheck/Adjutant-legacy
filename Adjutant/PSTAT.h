@@ -17,7 +17,7 @@ namespace Components
 		// Sets PSTAT circuit pin states
 		void Begin();
 
-		// Configure a PSTAT address
+		// Configures an LMP910000 at a given address
 		void Configure(byte addr, LMP91000::Configuration target);
 
 		// ADC interface

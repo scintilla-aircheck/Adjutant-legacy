@@ -27,6 +27,8 @@ namespace Components
 
 	void PSTAT::Configure(byte addr, LMP91000::Configuration config)
 	{
+		Select(addr);
+		LMP91000::Configure(config);
 	}
 
 	double PSTAT::ADC()
@@ -41,20 +43,16 @@ namespace Components
 
 	void PSTAT::Select(byte target)
 	{
-		Serial.print("Select: ");
 		// Parse byte and set pin state
 		for (byte i = 0; i < 3; i++)
 			if (target & (1 << i))
 			{
 				digitalWrite(Address_[i], HIGH);
 				Serial.print(Address_[i]);
-				Serial.print("H, ");
 			}
 			else
 			{
 				digitalWrite(Address_[i], LOW);
-				Serial.print("L, ");
 			}
-		Serial.println();
 	}
 }

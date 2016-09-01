@@ -77,6 +77,24 @@ namespace Components
 			TIAOn = 0x07		// Temperature sensing mode
 		};
 
+		struct Configuration
+		{
+			LMP91000::ETIAGain TIAGain;
+			LMP91000::ERLoad RLoad;
+			bool ExtRef;
+			LMP91000::EIntZero IntZero;
+			bool BiasSign;
+			LMP91000::EBias Bias;
+			bool FETShort;
+			LMP91000::EOpMode OpMode;
+
+			// Setting constructor
+			Configuration(
+				ETIAGain tia_gain, ERLoad r_load, bool ext_ref,
+				EIntZero int_zero, bool bias_sign, EBias bias,
+				bool fet_short, EOpMode op_mode);
+		};
+
 		static const byte I2CAddress = 0x48; // 1001 000
 
 		void Begin();
@@ -119,6 +137,9 @@ namespace Components
 		// Operating mode setting
 		EOpMode OpMode();
 		void OpMode(EOpMode mode);
+
+		// Configures the LMP910000 IC based on a provided configuration
+		void Configure(Configuration config);
 		
 	private:
 		// The MENB pin number

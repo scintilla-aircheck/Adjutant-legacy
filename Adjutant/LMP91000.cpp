@@ -2,6 +2,20 @@
 
 namespace Components
 {
+	LMP91000::Configuration::Configuration(
+		ETIAGain tia_gain, ERLoad r_load, bool ext_ref, EIntZero int_zero, bool bias_sign,
+		EBias bias, bool fet_short, EOpMode op_mode)
+	{
+		TIAGain = tia_gain;
+		RLoad = r_load;
+		ExtRef = ext_ref;
+		IntZero = int_zero;
+		BiasSign = bias_sign;
+		Bias = bias;
+		FETShort = fet_short;
+		OpMode = op_mode;
+	}
+
 	LMP91000::LMP91000() {}
 
 	LMP91000::LMP91000(byte menb_pin)
@@ -114,7 +128,34 @@ namespace Components
 		setValue(ERegister::MODECN, (byte)mode, 7);
 	}
 
-	/// Sets the LMP91002 memory register to an intended target
+	/// Configures all LMP91000 memory registers
+	void LMP91000::Configure(Configuration config)
+	{
+		byte buffer;
+
+		isLocked(false);
+
+		// Sets TIACN register
+		buffer = (byte)config.RLoad;
+		buffer |= (byte)config.TIAGain << 2;
+		setRawValue(ERegister::TIACN, buffer);
+
+		// Sets REFCN register
+		buffer = (byte)config.Bias;
+		buffer |= (byte)config.BiasSign << 4;
+		buffer |= (byte)config.IntZero << 5;
+		buffer |= (byte)config.ExtRef << 7;
+		setRawValue(ERegister::REFCN, buffer);
+
+		// Sets MODECN register
+		buffer = (byte)config.OpMode;
+		buffer |= (byte)config.FETShort << 7;
+		setRawValue(ERegister::MODECN, buffer);
+
+		isLocked(true);
+	}
+
+	/// Sets the LMP91000 memory register to an intended target
 	byte LMP91000::setRegister(ERegister target)
 	{
 		digitalWrite(MENBPin_, LOW);
@@ -128,7 +169,7 @@ namespace Components
 		return error;
 	}
 
-	/// Sets a target LMP91002 memory register to an intended value
+	/// Sets a target LMP91000 memory register to an intended value
 	byte LMP91000::getRawValue(ERegister target)
 	{
 		// Set target register
