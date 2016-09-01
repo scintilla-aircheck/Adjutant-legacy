@@ -17,6 +17,11 @@ namespace Components
 
 	SDS021::~SDS021() {}
 
+	void SDS021::Begin()
+	{
+		SoftwareSerial_.begin(kBaudRate);
+	}
+
 	int SDS021::ID()
 	{
 		return ID_;

@@ -38,8 +38,12 @@ namespace Components
 			byte Day;
 		};
 
+		/// Instantiates a new SDS021 controller with an associated software serial connection
 		SDS021(byte rx_pin, byte tx_pin);
 		~SDS021();
+
+		/// Initializes the software serial connection
+		void Begin();
 
 		/// Gets/sets the current sensor ID association
 		int ID();
@@ -77,6 +81,7 @@ namespace Components
 		SoftwareSerial SoftwareSerial_;
 		
 		// Message properties
+		static const byte kBaudRate = 9600;
 		static const byte kOutputLength_ = 19;
 		static const byte kInputLength_ = 10;
 
