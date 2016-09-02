@@ -10,6 +10,10 @@
 #include "SPEC.h"
 #include "SDS021.h"
 
+// I2C pins
+#define I2CSDA_PIN 2
+#define I2CSCL_PIN 0
+
 // UART circuit controls
 #define SSRX_PIN 14
 #define SSTX_PIN 12
@@ -33,7 +37,7 @@ void setup() {
 
 	// Initialize I2C connection
 	Serial.print("Initializing I2C bus...");
-	Wire.pins(2, 0);
+	Wire.pins(I2CSDA_PIN, I2CSCL_PIN);
 	Wire.begin();
 	Serial.println("Done!");
 
