@@ -15,15 +15,15 @@
 #define SSTX_PIN 12
 
 // Gas sensor circuit controls
-#define PSEL0_PIN 4
-#define PSEL1_PIN 5
-#define PSEL2_PIN 13
+#define PSTAT0_PIN 4
+#define PSTAT1_PIN 5
+#define PSTAT2_PIN 13
 #define MENB_PIN 16
 
 // Sensors and components
-Components::PSTAT gas = Components::PSTAT(PSEL0_PIN, PSEL1_PIN, PSEL2_PIN, MENB_PIN);
 Components::SDS021 dust = Components::SDS021(SSRX_PIN, SSTX_PIN);
-//Components::SKM61 gps = Components::SKM61();
+Components::PSTAT gas = Components::PSTAT(PSTAT0_PIN, PSTAT1_PIN, PSTAT2_PIN, MENB_PIN);
+//Components::SKM61 gps = Components::SKM61(SSRX_PIN, SSTX_PIN);
 
 void setup() {
 	// Intialize UART connection
@@ -31,48 +31,61 @@ void setup() {
 	while (!Serial); // Necessary for USB
 	Serial.println("Hardware serial initialized.");
 
-	// Initialize software serial connection
-	Serial.print("Initializing dust sensor...");
-	dust.Begin();
-	dust.PassiveMode(true);
-	Serial.println("Done!");
-
 	// Initialize I2C connection
 	Serial.print("Initializing I2C bus...");
 	Wire.pins(2, 0);
 	Wire.begin();
 	Serial.println("Done!");
 
+	// Initialize software serial connection
+	Serial.print("Initializing dust sensor...");
+	dust.Begin();
+	dust.PassiveMode(true);
+	dust.Awake(false);
+	dust.Update();
+	Serial.println("Done!");
+
 	// Initialize SPEC sensors
 	Serial.print("Initializing PSTAT circuit...");
 	gas.Begin();
-	Serial.println("Done!");
-
-	Serial.print("Configuring ADC circuit...");
 	gas.ADC(true, Components::MCP3425::EResolution::d16Bit, Components::MCP3425::EGain::x1);
-	Serial.println("Done!");
-
-	Serial.print("Configuring O2 sensor...");
 	gas.Configure(0, Components::SPEC::CO);
-	Serial.println("Done!");
-
 	//gas.Configure(1, Components::SPEC::O3);
+	Serial.println("Done!");
 }
 
 void loop() {
-	Serial.println("----------");
 
+	// Wake up and query dust sensor
+	dust.Awake(true);
+	delay(30 * 1000);
 	dust.Query();
-	dust.Update();
+	if (dust.Update())
+	{
+		Serial.print("PM 2.5: ");
+		Serial.println(dust.PM2_5(), 1);
 
-	Serial.print("PM 2.5: ");
-	Serial.println(dust.PM2_5(), 1);
+		Serial.print("PM 10: ");
+		Serial.println(dust.PM10(), 1);
+	}
+	dust.Awake(false);
 
-	Serial.print("PM 10: ");
-	Serial.println(dust.PM10(), 1);
+	// Wake up an query gas sensors
+	//for (int i = 0; i < 5; i++)
+	//{
+	//	gas.Select(i);
+	//	gas.Awake(true);
+	//
+	//	Serial.print(gas.Target());
+	//	Serial.print(": ");
+	//	Serial.println(gas.PPM());
+	//
+	//	gas.Awake(false);
+	//}
 
+	// DEBUG: Gas voltage
 	Serial.print("VOUT: ");
 	Serial.println(gas.ADC(), 4);
 
-	delay(10000);
+	delay(30 * 1000);
 }
