@@ -108,7 +108,6 @@ namespace Components
 			if (CheckSum(buffer))
 			{
 				ECommandId command_id = (ECommandId)buffer[1];
-				ID_ = CrunchBytes(buffer[6], buffer[7]);
 
 				// Parse data frame
 				if (command_id == ECommandId::Data)
@@ -131,6 +130,9 @@ namespace Components
 					else if (action == EAction::Version)
 						Firmware_ = { buffer[3], buffer[4], buffer[5] };
 				}
+
+				// Update device ID
+				ID_ = CrunchBytes(buffer[6], buffer[7]);
 			}
 		}
 
