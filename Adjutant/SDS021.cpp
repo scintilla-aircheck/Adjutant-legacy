@@ -19,7 +19,7 @@ namespace Components
 
 	void SDS021::Begin()
 	{
-		SoftwareSerial_.begin(kBaudRate);
+		SoftwareSerial_.begin(kBaudRate_);
 	}
 
 	int SDS021::ID()
@@ -98,13 +98,13 @@ namespace Components
 	bool SDS021::Update()
 	{
 		byte buffer[kInputLength_];
-		bool invalid = true;
 
 		// Check serial buffer for a message
 		if (SoftwareSerial_.available() >= 10)
 		{
 			// Read and validate the message
 			SoftwareSerial_.readBytesUntil((byte)EMessage::Tail, buffer, kInputLength_);
+
 			if (CheckSum(buffer))
 			{
 				ECommandId command_id = (ECommandId)buffer[1];
@@ -141,34 +141,44 @@ namespace Components
 
 	byte* SDS021::MakeMessage(EAction action, int address)
 	{
-		// Creates a new byte array
-		byte message[kOutputLength_];
+		// Creates a new byte array of zeroes
+		byte* buffer = new byte[kOutputLength_] { 0 };
 
 		// Sets common message values
-		message[0] = (byte)EMessage::Head;
-		message[1] = (byte)ECommandId::Command;
-		message[2] = (byte)action;
-		message[kOutputLength_] = (byte)EMessage::Tail;
+		buffer[0] = (byte)EMessage::Head;
+		buffer[1] = (byte)ECommandId::Command;
+		buffer[2] = (byte)action;
+		buffer[15] = address >> 8;
+		buffer[16] = address & 0xFF;
+		buffer[kOutputLength_ - 1] = (byte)EMessage::Tail;
 
-		// Sets a target device address
-		message[15] = address >> 8;
-		message[16] = address & 0xFF;
-
-		return message;
+		return buffer;
 	}
 
 	void SDS021::WriteMessage(byte* buffer)
 	{
+		// Calculates and stores checksum in output buffer
+		buffer[17] = calcCheckSum(buffer, 2, 17);
+
 		SoftwareSerial_.write(buffer, kOutputLength_);
-		//delete[] buffer;
+
+		// Waits for software serial to finish sending message
+		delay(16); // (19 bytes * 8 bits * 0.104 ms = 15.808 ms)
+
+		delete[] buffer;
+	}
+
+	byte SDS021::calcCheckSum(byte* buffer, int start_idx, int stop_idx)
+	{
+		int chk = 0;
+		for (int i = start_idx; i < stop_idx; i++)
+			chk += buffer[i];
+		return chk % 256;
 	}
 
 	bool SDS021::CheckSum(byte* buffer)
 	{
-		byte chk = 0;
-		for (int i = 2; i < 8; i++)
-			chk += buffer[i];
-		return chk == buffer[8];
+		 return calcCheckSum(buffer, 2, 8) == buffer[8];
 	}
 
 	int SDS021::CrunchBytes(byte high_byte, byte low_byte)

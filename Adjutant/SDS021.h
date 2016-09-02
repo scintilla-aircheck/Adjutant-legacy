@@ -24,12 +24,12 @@ namespace Components
 
 		enum class EAction
 		{
-			Mode = 0x2,
-			Query = 0x4,
-			Id = 0x5,
-			State = 0x6,
-			Version = 0x7,
-			Interval = 0x8,
+			Mode = 2,
+			Query = 4,
+			Id = 5,
+			State = 6,
+			Version = 7,
+			Interval = 8,
 		};
 
 		struct Version
@@ -82,7 +82,7 @@ namespace Components
 		SoftwareSerial SoftwareSerial_;
 		
 		// Message properties
-		static const byte kBaudRate = 9600;
+		static const byte kBaudRate_ = 9600;
 		static const byte kOutputLength_ = 19;
 		static const byte kInputLength_ = 10;
 
@@ -100,6 +100,9 @@ namespace Components
 
 		/// Writes and destroys an existing message buffer array
 		void WriteMessage(byte* buffer);
+
+		/// Calculates a checksum byte for a given range of bytes in an array
+		byte calcCheckSum(byte* buffer, int start_idx, int stop_idx);
 
 		/// Validates a messages checksum byte
 		bool CheckSum(byte* buffer);
