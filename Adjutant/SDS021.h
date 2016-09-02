@@ -24,12 +24,12 @@ namespace Components
 
 		enum class EAction
 		{
-			Mode = 2,
-			Query = 4,
-			Id = 5,
-			State = 6,
-			Version = 7,
-			Interval = 8,
+			Mode = 0x2,
+			Query = 0x4,
+			Id = 0x5,
+			State = 0x6,
+			Version = 0x7,
+			Interval = 0x8,
 		};
 
 		struct Version
