@@ -50,9 +50,6 @@ namespace Components
 		int ID();
 		void ID(int id = 0xFFFF);
 
-		/// Changes the device ID of a remote sensor
-		void ID(int old_id, int new_id);
-
 		/// Gets/sets a sensor's mode (true is passive/query mode)
 		bool PassiveMode();
 		void PassiveMode(bool passive);

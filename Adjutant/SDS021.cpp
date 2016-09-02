@@ -29,14 +29,9 @@ namespace Components
 
 	void SDS021::ID(int id)
 	{
-		ID_ = id;
-	}
-
-	void SDS021::ID(int old_id, int new_id)
-	{
-		byte* buffer = MakeMessage(EAction::Id, true, old_id);
-		buffer[13] = new_id >> 8;
-		buffer[14] = new_id & 0xFF;
+		byte* buffer = MakeMessage(EAction::Id, true, ID_);
+		buffer[13] = id >> 8;
+		buffer[14] = id & 0xFF;
 		WriteMessage(buffer);
 	}
 
