@@ -56,6 +56,8 @@ void setup() {
 	gas.Configure(0, Components::SPEC::CO);
 	//gas.Configure(1, Components::SPEC::O3);
 	Serial.println("Done!");
+
+	Serial.println("- - - - - - - - - -");
 }
 
 void loop() {
