@@ -177,7 +177,8 @@ namespace Components
 		int chk = 0;
 		for (int i = start_idx; i < stop_idx; i++)
 			chk += buffer[i];
-		return chk % 256;
+		chk &= 0xFF;
+		return chk;
 	}
 
 	bool SDS021::CheckSum(byte* buffer)
@@ -187,7 +188,7 @@ namespace Components
 
 	int SDS021::CrunchBytes(byte high_byte, byte low_byte)
 	{
-		return ((int)high_byte * 0xFF) + (int)low_byte;
+		return ((int)high_byte << 8) + (int)low_byte;
 	}
 
 }
