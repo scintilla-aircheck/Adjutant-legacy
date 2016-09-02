@@ -96,7 +96,7 @@ namespace Components
 		Version Firmware_;
 
 		/// Creates a new message buffer array with common fields set
-		byte* MakeMessage(EAction action, int address = 0xFFFF);
+		byte* MakeMessage(EAction action, bool set = 0, int address = 0xFFFF);
 
 		/// Writes and destroys an existing message buffer array
 		void WriteMessage(byte* buffer);

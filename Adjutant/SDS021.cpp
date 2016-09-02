@@ -34,7 +34,7 @@ namespace Components
 
 	void SDS021::ID(int old_id, int new_id)
 	{
-		byte* buffer = MakeMessage(EAction::Id, old_id);
+		byte* buffer = MakeMessage(EAction::Id, true, old_id);
 		buffer[13] = new_id >> 8;
 		buffer[14] = new_id & 0xFF;
 		WriteMessage(buffer);
@@ -47,7 +47,7 @@ namespace Components
 
 	void SDS021::PassiveMode(bool passive)
 	{
-		byte* buffer = MakeMessage(EAction::Mode, ID_);
+		byte* buffer = MakeMessage(EAction::Mode, true, ID_);
 		buffer[4] = passive;
 		WriteMessage(buffer);
 	}
@@ -59,7 +59,7 @@ namespace Components
 
 	void SDS021::Awake(bool working)
 	{
-		byte* buffer = MakeMessage(EAction::State, ID_);
+		byte* buffer = MakeMessage(EAction::State, true, ID_);
 		buffer[4] = working;
 		WriteMessage(buffer);
 	}
@@ -74,7 +74,7 @@ namespace Components
 		// Clamps minutes between 0-30
 		if (minutes > 30)
 			minutes = 30;
-		byte* buffer = MakeMessage(EAction::Interval, ID_);
+		byte* buffer = MakeMessage(EAction::Interval, true, ID_);
 		buffer[4] = minutes;
 		WriteMessage(buffer);
 	}
@@ -91,24 +91,29 @@ namespace Components
 
 	void SDS021::Query()
 	{
-		byte* buffer = MakeMessage(EAction::Query, ID_);
+		byte* buffer = MakeMessage(EAction::Query, false, ID_);
 		WriteMessage(buffer);
 	}
 
 	bool SDS021::Update()
 	{
+		bool updated = false;
 		byte buffer[kInputLength_];
 
 		// Check serial buffer for a message
-		if (SoftwareSerial_.available() >= 10)
+		while (SoftwareSerial_.available() >= 10)
 		{
-			// Read and validate the message
+			// Clear the buffer
+			for (int i = 0; i < kInputLength_; i++)
+				buffer[i] = 0;
+
+			// Read the next message
 			SoftwareSerial_.readBytesUntil((byte)EMessage::Tail, buffer, kInputLength_);
 
 			if (CheckSum(buffer))
 			{
 				ECommandId command_id = (ECommandId)buffer[1];
-				int device_id = CrunchBytes(buffer[6], buffer[7]);
+				ID_ = CrunchBytes(buffer[6], buffer[7]);
 
 				// Parse data frame
 				if (command_id == ECommandId::Data)
@@ -131,15 +136,13 @@ namespace Components
 					else if (action == EAction::Version)
 						Firmware_ = { buffer[3], buffer[4], buffer[5] };
 				}
-
-				return true;
 			}
 		}
 
-		return false;
+		return updated;
 	}
 
-	byte* SDS021::MakeMessage(EAction action, int address)
+	byte* SDS021::MakeMessage(EAction action, bool set, int address)
 	{
 		// Creates a new byte array of zeroes
 		byte* buffer = new byte[kOutputLength_] { 0 };
@@ -148,6 +151,7 @@ namespace Components
 		buffer[0] = (byte)EMessage::Head;
 		buffer[1] = (byte)ECommandId::Command;
 		buffer[2] = (byte)action;
+		buffer[3] = (byte)set;
 		buffer[15] = address >> 8;
 		buffer[16] = address & 0xFF;
 		buffer[kOutputLength_ - 1] = (byte)EMessage::Tail;
